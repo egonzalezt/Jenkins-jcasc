@@ -1,0 +1,75 @@
+jenkins:
+  agentProtocols:
+  - "JNLP4-connect"
+  - "Ping"
+  authorizationStrategy:
+    globalMatrix: # <.>
+      permissions:
+      - "USER:Overall/Administer:${JENKINS_ADMIN_ID}"
+      - "GROUP:Overall/Read:authenticated"
+  clouds:
+  - docker: # <.>
+      containerCap: 5
+      dockerApi:
+        connectTimeout: 60
+        dockerHost:
+          uri: "tcp://host.docker.internal:2375"
+        readTimeout: 60
+      exposeDockerHost: true
+      name: "docker"
+      templates:
+      - connector: "attach"
+        dockerTemplateBase:
+          cpuPeriod: 0
+          cpuQuota: 0
+          image: "jenkins/agent" # <.>
+        instanceCapStr: "10"
+        labelString: "agent" # <.>
+        mode: EXCLUSIVE
+        name: "Jenkins Agent"
+        pullStrategy: PULL_ALWAYS
+        pullTimeout: 300
+        remoteFs: "/home/jenkins/agent"
+  crumbIssuer:
+    standard:
+      excludeClientIPFromCrumb: false
+  disableRememberMe: false
+  labelAtoms:
+  - name: "!!!DO_NOT_USE!!!"
+  - name: "agent"
+  - name: "docker_in_docker"
+  - name: "master"
+  labelString: "!!!DO_NOT_USE!!!"
+  numExecutors: 0 # <.>
+  remotingSecurity:
+    enabled: true
+  securityRealm: # <.>
+    local:
+      allowsSignup: false
+      users:
+        - id: ${JENKINS_ADMIN_ID}
+          password: ${JENKINS_ADMIN_PASSWORD}
+credentials:
+  system:
+    domainCredentials:
+      - domain:
+          name: "global"
+          description: "Global credentials"
+        credentials:
+          - string:
+              id: "discord-webhook-credential-id"
+              scope: GLOBAL
+              secret: "${DISCORD_WEBHOOK_URL}"
+jobs: # <.>
+  - file: /var/jenkins_home/pipeline.groovy
+security:
+  queueItemAuthenticator:
+    authenticators:
+    - global:
+        strategy: "triggeringUsersAuthorizationStrategy"
+unclassified:
+  locale:
+    ignoreAcceptLanguage: true
+    systemLocale: "en"
+  location:
+    url: "http://localhost:8080/"

@@ -1,0 +1,17 @@
+authorize-project:latest
+blueocean:latest
+configuration-as-code:latest
+docker-plugin:latest
+job-dsl:latest
+locale:latest
+matrix-auth:latest
+golang:latest
+workflow-aggregator:latest
+workflow-cps:latest
+workflow-cps-global-lib:latest
+pipeline-utility-steps:latest
+cobertura:latest
+git:latest
+docker-workflow:latest
+github:latest
+discord-notifier:latest
