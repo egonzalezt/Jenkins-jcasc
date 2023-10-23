@@ -77,3 +77,5 @@ fabric.properties
 
 # Ignore the maven target folder
 target/
+
+.env
