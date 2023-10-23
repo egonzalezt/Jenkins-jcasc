@@ -1,0 +1,51 @@
+version: '3.8'
+services:
+  jenkins-controller:
+    build: .
+    container_name: jenkins-controller
+    environment:
+      - DOCKER_CERT_PATH=/certs/client
+      - DOCKER_HOST=tcp://docker:2376
+      - DOCKER_TLS_VERIFY=1
+      - JENKINS_ADMIN_ID=${ENV_JENKINS_ADMIN_ID}
+      - JENKINS_ADMIN_PASSWORD=${ENV_JENKINS_ADMIN_PASSWORD}
+      - DISCORD_WEBHOOK_URL=${ENV_DISCORD_WEBHOOK_URL}
+    networks:
+      - jenkins
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    restart: unless-stopped
+    volumes:
+      - jenkins-data:/var/jenkins_home
+      - jenkins-docker-certs:/certs/client:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  docker-dind:
+    command: --storage-driver=overlay2
+    container_name: jenkins-docker
+    environment:
+      - DOCKER_TLS_CERTDIR=/certs
+    image: docker:dind
+    links:
+      - "jenkins-controller:docker"
+    networks:
+      - jenkins
+    ports:
+      - "2376:2376"
+    privileged: true
+    restart: unless-stopped
+    volumes:
+      - jenkins-data:/var/jenkins_home
+      - jenkins-docker-certs:/certs/client
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+networks:
+  jenkins:
+    name: jenkins
+
+volumes:
+  jenkins-data:
+  jenkins-docker-certs:
