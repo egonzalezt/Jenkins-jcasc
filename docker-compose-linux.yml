@@ -11,6 +11,7 @@ services:
       - JENKINS_ADMIN_PASSWORD=${ENV_JENKINS_ADMIN_PASSWORD}
       - DISCORD_WEBHOOK_URL=${ENV_DISCORD_WEBHOOK_URL
       - BASE_URL=${ENV_BASE_URL}
+      - CASC_JENKINS_CONFIG=/var/jenkins_home/casc.yaml
     networks:
       - jenkins
     ports:
@@ -20,6 +21,7 @@ services:
     volumes:
       - jenkins-data:/var/jenkins_home
       - jenkins-docker-certs:/certs/client:ro
+      - ./casc.yaml:/var/jenkins_home/casc.yaml
     extra_hosts:
       - "host.docker.internal:host-gateway"
 

@@ -5,6 +5,7 @@ services:
     container_name: jenkins-controller
     environment:
       - DOCKER_CERT_PATH=/certs/client
+      - CASC_JENKINS_CONFIG=/var/jenkins_home/casc.yaml
       - DOCKER_HOST=tcp://docker:2376
       - DOCKER_TLS_VERIFY=1
       - JENKINS_ADMIN_ID=${ENV_JENKINS_ADMIN_ID} # <.>
@@ -19,8 +20,10 @@ services:
     restart: unless-stopped
     volumes:
       - jenkins-data:/var/jenkins_home
+      - jenkins-config:/var/jenkins_config
+      - jenkins-secrets:/usr/share/jenkins/ref/secrets/
       - jenkins-docker-certs:/certs/client:ro
-
+      - ./casc.yaml:/var/jenkins_home/casc.yaml
   docker-dind: # <.>
     command: --storage-driver=overlay2
     container_name: jenkins-docker
@@ -36,7 +39,6 @@ services:
     privileged: true
     restart: unless-stopped
     volumes:
-      - jenkins-data:/var/jenkins_home
       - jenkins-docker-certs:/certs/client
 
 networks:
@@ -46,3 +48,5 @@ networks:
 volumes:
   jenkins-data:
   jenkins-docker-certs:
+  jenkins-config:
+  jenkins-secrets:
