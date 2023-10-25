@@ -16,3 +16,4 @@ docker-workflow:latest
 github:latest
 discord-notifier:latest
 github-checks:latest
+git-changelog:latest
