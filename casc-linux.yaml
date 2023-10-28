@@ -24,6 +24,8 @@ jenkins:
           cpuQuota: 0
           image: "jenkins/agent" # <.>
           network: "jenkins"
+          extraHosts: 
+            - "host.docker.internal:host-gateway"
         instanceCapStr: "10"
         labelString: "agent" # <.>
         mode: EXCLUSIVE

@@ -7,7 +7,7 @@ pipelineJob('pipeline') {
         label 'agent'
     }
     tools {
-        go 'go-1.20'
+        dockerTool 'docker'
     }
     environment {
         GO111MODULE = 'on'
@@ -16,43 +16,7 @@ pipelineJob('pipeline') {
     stages {
         stage('Setup') {
             steps {
-                sh 'mkdir -p $HOME/go/bin'
-                sh 'export GOPATH=$HOME/go'
-                sh 'export PATH=$PATH:$GOPATH/bin'
-                sh 'go install github.com/t-yuki/gocover-cobertura@latest'
-            }
-        }
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/armando555/go-api-cicd.git'
-            }
-        }
-        stage('Install Dependencies') {
-            steps {
-                sh 'go mod tidy'
-            }
-        }
-        stage('Build') {
-            steps {
-                sh 'go build'
-            }
-        }
-        stage('Test') {
-            steps {
-                sh 'ls'
-                sh 'pwd'
-                sh 'go test -coverprofile=coverage.txt -covermode count ./'
-            }
-        }
-        stage('Coverage') {
-            steps {
-                sh '/home/jenkins/go/bin/gocover-cobertura < coverage.txt > coverage.xml'
-                cobertura(coberturaReportFile: 'coverage.xml')
-            }
-        }
-        stage('Export Artifacts') {
-            steps {
-                archiveArtifacts artifacts: 'coverage.xml', fingerprint: true
+                sh 'docker ps'
             }
         }
     }
